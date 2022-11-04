@@ -30,8 +30,16 @@ module.exports = async function (fastify, opts) {
     })
 
     fastify.patch('/:id', function (req, reply) {
+        const str = () => {
+            const keys = Object.keys(req.body);
+            let str = '';
+            keys.forEach((key, index) => {
+                str += ' '+key+' = "'+ req.body[key]+ (index+1 === keys.length?'" ':',');
+            })
+            return str;
+        }
         fastify.mysql.query(
-            `UPDATE users SET firstname = '${req.body.firstname}', lastname = '${req.body.lastname}', age = ${req.body.age}, email = '${req.body.email}', phone = '${req.body.phone}' WHERE id=?`,[req.params.id],
+            `UPDATE users SET ${str()} WHERE id=?`,[+req.params.id],
             function onResult(err, result) {
                 reply.send(err || result)
             }
