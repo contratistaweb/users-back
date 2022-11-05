@@ -3,6 +3,7 @@
 const path = require('path');
 const AutoLoad = require('@fastify/autoload');
 const cors = require('@fastify/cors');
+
 require('dotenv').config();
 
 // Pass --options via CLI arguments in command to enable these options.
@@ -28,10 +29,12 @@ module.exports = async function (fastify, opts) {
     options: Object.assign({}, opts)
   })
 
+
   fastify.register(require('@fastify/mysql'), {
     connectionString: process.env.CONNECTION_STRING,
   })
 
   fastify.register(cors)
+
 
 }

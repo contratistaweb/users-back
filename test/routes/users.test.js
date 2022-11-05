@@ -1,27 +1,75 @@
 'use strict'
 
-const { test } = require('tap')
-const { build } = require('../helper')
+const {build, config} = require('./../helper')
+const {test} = require("tap");
+let usersCount = 0;
 
-test('users is loaded', async (t) => {
-  const app = await build(t)
-
-  const res = await app.inject({
-    url: '/users'
-  })
-  t.equal(res.payload, 'this is an users')
+// section POST /users
+test('GET /users', async (test) => {
+    const app = await build(test);
+    const res = await app.inject({
+        url: '/users',
+        method: 'POST',
+        payload: {
+            firstname: 'ut',
+            lastname: 'ut',
+            age: Math.random()*10,
+            email: 'ut',
+            phone: 'ut',
+        }
+    });
+    test.equal(res.statusCode, 200);
+    test.ok(res);
+    test.end();
 })
 
-// inject callback style:
-//
-// test('users is loaded', (t) => {
-//   t.plan(2)
-//   const app = await build(t)
-//
-//   app.inject({
-//     url: '/users'
-//   }, (err, res) => {
-//     t.error(err)
-//     t.equal(res.payload, 'this is an users')
-//   })
-// })
+// section GET /users
+test('GET /users', async (test) => {
+    const app = await build(test);
+    const res = await app.inject({
+        url: '/users',
+        method: 'GET'
+    });
+    usersCount = res.payload.length;
+    test.equal(res.statusCode, 200);
+    test.ok(res);
+})
+
+// section GET /users/:id
+test('GET user for id /users/$id', async (test) => {
+    const app = await build(test);
+    const res = await app.inject({
+        url: `/users/${usersCount}`,
+        method: 'GET'
+    });
+    test.equal(res.statusCode, 200);
+    test.ok(res);
+    test.end();
+})
+
+// section PATCH /users/:id
+test('The age property should be a number', async (test) => {
+    const app = await build(test);
+    const res = await app.inject({
+        url: `/users/${usersCount}`,
+        method: 'PATCH',
+        payload: {age: Math.random()*10}
+    });
+    test.equal(res.statusCode, 200);
+    test.ok(res);
+    test.end();
+})
+
+// section DELETE /users/:id
+test('DELETE user for id /users/$id', async (test) => {
+    const app = await build(test);
+    const res = await app.inject({
+        url: `/users/${usersCount}`,
+        method: 'DELETE',
+    });
+    test.equal(res.statusCode, 200);
+    test.ok(res);
+    test.end();
+})
+
+

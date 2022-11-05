@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "tap \"test/**/*.test.js\"",
+    "test": "tap",
     "start": "fastify start -l info app.js",
     "dev": "fastify start -w -l info -P app.js"
   },
@@ -19,6 +19,7 @@
     "@fastify/cors": "^8.1.1",
     "@fastify/mysql": "^4.0.0",
     "@fastify/sensible": "^5.0.0",
+    "@fastify/static": "^5.0.2",
     "dotenv": "^16.0.3",
     "fastify": "^4.0.0",
     "fastify-cli": "^5.5.1",
@@ -26,6 +27,8 @@
     "mysql2": "^2.3.3"
   },
   "devDependencies": {
+    "jest": "^29.2.2",
+    "supertest": "^6.3.1",
     "tap": "^16.1.0"
   }
 }
