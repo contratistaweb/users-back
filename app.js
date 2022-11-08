@@ -3,6 +3,7 @@
 const path = require('path');
 const AutoLoad = require('@fastify/autoload');
 const cors = require('@fastify/cors');
+const mysql = require('@fastify/mysql');
 
 require('dotenv').config();
 
@@ -19,19 +20,25 @@ module.exports = async function (fastify, opts) {
   // through your application
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'plugins'),
-    options: Object.assign({}, opts)
+    options: Object.assign({}, opts),
+  })
+
+  fastify.register(require('@fastify/static'), {
+    root: path.join(__dirname, 'app'),
+    prefix: '/', // optional: default '/'
   })
 
   // This loads all plugins defined in routes
   // define your routes in one of these
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'routes'),
-    options: Object.assign({}, opts)
+    options: Object.assign({}, opts),
   })
 
 
-  fastify.register(require('@fastify/mysql'), {
-    connectionString: process.env.CONNECTION_STRING,
+  await fastify.register(mysql,{
+    connectionString: `mysql://${process.env.MYSQL_USER}:${process.env.MYSQL_ROOT_PASSWORD}@${process.env.DB_HOST}:${process.env.MYSQL_LOCAL_PORT}/${process.env.MYSQL_DATABASE}`,
+    connectTimeoutMS: 5000,
   })
 
   fastify.register(cors)

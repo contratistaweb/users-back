@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0.13
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: shop
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3307:33060
+    volumes:
+      - db:/var/lib/mysql
+  app:
+    depends_on:
+      - mysql
+    image: node:18.12.0
+    # build: .
+    restart: always
+    ports:
+      - 3001:3000
+    volumes:
+      - ./:/back/
+    environment:
+      - DB_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=shop
+      - MYSQL_LOCAL_PORT=33060
+    command:
+      - /bin/sh
+      - -c
+      - |
+        ls /back/
+        cd /back/
+        npm install -g fastify-cli
+        npm install
+        npm run start
+
+volumes:
+  db:
